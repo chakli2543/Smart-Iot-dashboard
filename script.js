@@ -138,3 +138,7 @@ function showToast(message, type="info"){
 }
 
 });
+
+document.querySelectorAll("section").forEach(sec => {
+    sec.classList.add("visible");
+});
