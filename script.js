@@ -89,18 +89,26 @@ db.ref("/sensor").on("value", snapshot => {
 // ----------------------
 // POWER OFF
 // ----------------------
-const powerOffBtn = document.getElementById('powerOffBtn');
-
 powerOffBtn.addEventListener('click', function() {
 
     devices.forEach(device => {
+
+        // Update Firebase
         db.ref("/" + device).set(0);
+
+        // ALSO update UI immediately
+        const card = document.querySelector(`[data-equipment="${device}"]`);
+        if (card) {
+            const toggle = card.querySelector('.toggle-input');
+            toggle.checked = false;
+            card.classList.remove('on');
+        }
+
     });
 
     showToast("All equipment powered OFF", "warning");
 
 });
-
 // ----------------------
 // CONTACT FORM
 // ----------------------
