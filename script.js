@@ -4,7 +4,7 @@ const toggleInputs = document.querySelectorAll('.toggle-input');
 const controlCards = document.querySelectorAll('.control-card');
 const toastContainer = document.getElementById('toastContainer');
 
-// 🔥 FIREBASE CONFIG (PUT YOUR DETAILS)
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyD5a5n1j8aKxTHRfAfOOAdnXdSn8mkpGe8",
   authDomain: "smart-factory-iot-dashboard.firebaseapp.com",
@@ -15,12 +15,15 @@ const firebaseConfig = {
   appId: "1:307396796776:web:51d0bde6fc9c864187f6dd"
 };
 
+// ✅ VERY IMPORTANT (YOU MISSED THIS)
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// ✅ MATCH WITH HTML + ESP32
+// MATCH DEVICES
 const devices = ["fan", "light", "conveyor", "plug"];
 
 // ----------------------
-// 🔁 CONTROL → FIREBASE
+// CONTROL → FIREBASE
 // ----------------------
 toggleInputs.forEach((input, index) => {
 
@@ -30,7 +33,6 @@ toggleInputs.forEach((input, index) => {
         const device = card.dataset.equipment;
         const isOn = this.checked ? 1 : 0;
 
-        // Send to Firebase
         db.ref("/" + device).set(isOn);
 
         if (isOn) {
@@ -46,7 +48,7 @@ toggleInputs.forEach((input, index) => {
 });
 
 // ----------------------
-// 🔁 FIREBASE → UI SYNC
+// FIREBASE → UI
 // ----------------------
 devices.forEach(device => {
 
@@ -72,7 +74,7 @@ devices.forEach(device => {
 });
 
 // ----------------------
-// 🌡 SENSOR DATA (LIVE)
+// SENSOR DATA
 // ----------------------
 db.ref("/sensor").on("value", snapshot => {
 
@@ -85,7 +87,7 @@ db.ref("/sensor").on("value", snapshot => {
 });
 
 // ----------------------
-// ⚡ POWER OFF ALL
+// POWER OFF
 // ----------------------
 const powerOffBtn = document.getElementById('powerOffBtn');
 
@@ -100,7 +102,7 @@ powerOffBtn.addEventListener('click', function() {
 });
 
 // ----------------------
-// 📩 CONTACT FORM (UNCHANGED)
+// CONTACT FORM
 // ----------------------
 const contactForm = document.querySelector('.contact-form');
 
@@ -120,7 +122,7 @@ contactForm.addEventListener('submit', function(e) {
 });
 
 // ----------------------
-// 🔔 TOAST FUNCTION
+// TOAST
 // ----------------------
 function showToast(message, type="info"){
 
@@ -137,8 +139,11 @@ function showToast(message, type="info"){
 
 }
 
-});
-
+// ----------------------
+// FORCE SHOW CONTENT
+// ----------------------
 document.querySelectorAll("section").forEach(sec => {
     sec.classList.add("visible");
+});
+
 });
