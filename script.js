@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const toggleInputs = document.querySelectorAll('.toggle-input');
 const controlCards = document.querySelectorAll('.control-card');
 const toastContainer = document.getElementById('toastContainer');
+const powerOffBtn = document.getElementById('powerOffBtn');
 
 // 🔥 FIREBASE CONFIG
 const firebaseConfig = {
@@ -15,11 +16,11 @@ const firebaseConfig = {
   appId: "1:307396796776:web:51d0bde6fc9c864187f6dd"
 };
 
-// ✅ VERY IMPORTANT (YOU MISSED THIS)
+// ✅ Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// MATCH DEVICES
+// DEVICE LIST
 const devices = ["fan", "light", "conveyor", "plug"];
 
 // ----------------------
@@ -87,16 +88,23 @@ db.ref("/sensor").on("value", snapshot => {
 });
 
 // ----------------------
-// POWER OFF
+// POWER OFF ALL (FIXED)
 // ----------------------
 powerOffBtn.addEventListener('click', function() {
 
+    // Atomic update (best method)
+    const updates = {
+        "/fan": 0,
+        "/light": 0,
+        "/conveyor": 0,
+        "/plug": 0
+    };
+
+    db.ref().update(updates);
+
+    // Update UI instantly
     devices.forEach(device => {
 
-        // Update Firebase
-        db.ref("/" + device).set(0);
-
-        // ALSO update UI immediately
         const card = document.querySelector(`[data-equipment="${device}"]`);
         if (card) {
             const toggle = card.querySelector('.toggle-input');
@@ -109,6 +117,7 @@ powerOffBtn.addEventListener('click', function() {
     showToast("All equipment powered OFF", "warning");
 
 });
+
 // ----------------------
 // CONTACT FORM
 // ----------------------
@@ -130,7 +139,7 @@ contactForm.addEventListener('submit', function(e) {
 });
 
 // ----------------------
-// TOAST
+// TOAST FUNCTION
 // ----------------------
 function showToast(message, type="info"){
 
